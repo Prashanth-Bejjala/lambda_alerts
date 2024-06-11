@@ -1,0 +1,39 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  sam-app
+
+  Sample SAM Template for sam-app
+
+Globals:
+  Function:
+    Timeout: 3
+    LoggingConfig:
+      LogFormat: JSON
+
+Resources:
+  AlertsFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: alerts/
+      Handler: app.lambdaHandler
+      Runtime: nodejs20.x
+      Architectures:
+        - x86_64
+      Events:
+        AlertsApi:
+          Type: Api
+          Properties:
+            Path: /alerts
+            Method: get
+
+Outputs:
+  AlertsApiEndpoint:
+    Description: API Gateway endpoint URL for the Alerts function
+    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/alerts/"
+  AlertsFunctionArn:
+    Description: ARN of the Alerts Lambda Function
+    Value: !GetAtt AlertsFunction.Arn
+  AlertsFunctionRoleArn:
+    Description: IAM Role ARN of the Alerts Lambda Function
+    Value: !GetAtt AlertsFunctionRole.Arn
